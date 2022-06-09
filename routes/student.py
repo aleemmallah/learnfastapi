@@ -5,10 +5,21 @@ from config.database import connection
 from bson import ObjectId
 
 student_router=APIRouter()
-
+#Get list of students
 @student_router.get('/students')
 async def find_all_students():
     return list_student_Entity(connection.local.student.find())
+
+#Find student by matching Id
+@student_router.get('/students/{studentId}')
+async def find_student_by_id(studentId):
+    return studentEntity(connection.local.student.find_one({"_id":ObjectId(studentId)}))
+
+
+
+
+
+
 @student_router.post('/students')
 async def create_student(student: Student):
     connection.local.student.insert_one(dict(student))
@@ -26,4 +37,4 @@ async def update_student(studentId,student:Student):
 async def delete_student(studentId):
     connection.local.student.find_one_and_delete(
         {"_id": ObjectId(studentId)})
-    return studentEntity(connection.local.student.find_one({"_id": ObjectId(studentId)}))
+    return list_student_Entity(connection.local.student.find())
